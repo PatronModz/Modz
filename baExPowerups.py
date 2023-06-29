@@ -2513,7 +2513,6 @@ class ExPowerupsSession(bs.Session):
         self._activity_deps = bs.DependencySet(bs.Dependency(ExPowerupsActivity))
         super().__init__([self._activity_deps])
         self.setactivity(bs.newactivity(ExPowerupsActivity))
-        bs.chatmessage(str(self.on_player_request))
 
     def on_player_request(self, player: bs.SessionPlayer) -> bool:
         # Reject all player requests.
