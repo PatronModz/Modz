@@ -1779,6 +1779,7 @@ def plugin():
     PlayerSpaz.on_jump_press = new_playerspaz_on_jump_press
     Activity.on_player_join = new_on_player_join
     PlayerSpaz.__init__ = new_playerspaz_init_
+    bui.set_party_icon_always_visible(True)
 
 # ba_meta export plugin
 class Install(bs.Plugin):
