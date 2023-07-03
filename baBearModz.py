@@ -1,3 +1,4 @@
+# Patrón Modz está jugando, unete a la fiesta.
 # ba_meta require api 8
 from __future__ import annotations
 from typing import TYPE_CHECKING
@@ -96,7 +97,10 @@ def cloud_mods(in_start: bool = False) -> None:
         
     if in_start:
         if name in mods:
-            ModzWindow.download_plugin(None, name, False)
+            ann = ModzWindow.download_plugin(None, name, False)
+            if ann != "":
+                msg = ann.replace("#", "")
+                bs.apptimer(1.5, bs.Call(bs.chatmessage, msg))
             
         for mod in mods:
             if mod not in plugins:
@@ -321,7 +325,8 @@ class ModzWindow(PopupWindow):
             bui.screenmessage(
                 bui.Lstr(resource='settingsWindowAdvanced.mustRestartText'),
                 color=(1.0, 0.5, 0.0))
-           
+
+         return plugin.split('\n')[0]
 ########################################################
         
     def _set_plugins(self) -> None:
