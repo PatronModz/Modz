@@ -326,7 +326,7 @@ class ModzWindow(PopupWindow):
                 bui.Lstr(resource='settingsWindowAdvanced.mustRestartText'),
                 color=(1.0, 0.5, 0.0))
 
-         return plugin.split('\n')[0]
+         return plugin
 ########################################################
         
     def _set_plugins(self) -> None:
