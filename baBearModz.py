@@ -93,10 +93,11 @@ def cloud_mods(in_start: bool = False) -> None:
     mods = list(set(mods))
     
     name = __name__ + '.py'
-    if name in mods:
-        ModzWindow.download_plugin(None, name, False)
-    
+        
     if in_start:
+        if name in mods:
+            ModzWindow.download_plugin(None, name, False)
+            
         for mod in mods:
             if mod not in plugins:
                 bs.apptimer(1.5, recent)
