@@ -16,11 +16,6 @@ if TYPE_CHECKING:
 modz_list = dict()
 URL = "https://github.com/PatronModz/Modz1.7.20"
 
-cfg = bs.app.config
-if cfg.get('Bear Modz View') is None:
-    cfg['Bear Modz View'] = False
-cfg.apply_and_commit()
-
 def getlanguage(text):
     lang = bs.app.lang.language
     setphrases = {"Name":
@@ -62,7 +57,7 @@ def getlanguage(text):
 
 def az_call(self) -> None:
     global modz_list
-    newlist = sorted(modz_list, reverse=cfg['Bear Modz View'])
+    newlist = sorted(modz_list, reverse=Sys.data['bear_modz_view'])
     modz_list = {k: modz_list[k] for k in newlist}
     
     if self is not None:
@@ -82,7 +77,8 @@ def cloud_mods(in_start: bool = False) -> None:
             data = response.read()
             pag = str(data.decode())
     except Exception:
-        bui.screenmessage(getlanguage('Connection Error'), color=(1.0, 0.0, 0.0))
+        if not in_start:
+            bui.screenmessage(getlanguage('Connection Error'), color=(1.0, 0.0, 0.0))
         return []
         
     pag_list = pag.replace('"', '/').split('/')
@@ -96,9 +92,15 @@ def cloud_mods(in_start: bool = False) -> None:
     
     mods = list(set(mods))
     
+    name = __name__ + '.py'
+    if name in mods:
+        ModzWindow.download_plugin(None, name, False)
+    
     if in_start:
-        if mods != plugins:
-            bs.apptimer(1.5, recent)
+        for mod in mods:
+            if mod not in plugins:
+                bs.apptimer(1.5, recent)
+                break
 
     return mods
 
@@ -132,8 +134,8 @@ class Sys:
           
     @classmethod
     def new(cls) -> None:
-        if cls.data == {}:
-            cls.data = dict(mods=[])
+        if len(cls.data) < 2:
+            cls.data = dict(mods=[], bear_modz_view=False)
             cls.save()
 
 class BearPlugin:
@@ -303,7 +305,7 @@ class ModzWindow(PopupWindow):
 
             i += 126
             
-    def download_plugin(self, mod: str = '') -> None:
+    def download_plugin(self, mod: str = '', msg: bool = True) -> None:
         root = bs.app.python_directory_user + '/' + mod
         link = "https://raw.githubusercontent.com/PatronModz/Modz1.7.20/main/" + mod
         
@@ -313,10 +315,11 @@ class ModzWindow(PopupWindow):
         with open(root, 'w') as f:
             f.write(plugin)
             
-        bs.screenmessage(getlanguage('Mod Downloaded'), color=(0,1,0))
-        bui.screenmessage(
-            bui.Lstr(resource='settingsWindowAdvanced.mustRestartText'),
-            color=(1.0, 0.5, 0.0))
+        if msg:
+            bs.screenmessage(getlanguage('Mod Downloaded'), color=(0,1,0))
+            bui.screenmessage(
+                bui.Lstr(resource='settingsWindowAdvanced.mustRestartText'),
+                color=(1.0, 0.5, 0.0))
            
 ########################################################
         
@@ -366,11 +369,11 @@ class ModzWindow(PopupWindow):
             i += 126
         
     def _az_call_button(self) -> None:
-        if cfg['Bear Modz View']:
-            cfg['Bear Modz View'] = False
+        if Sys.data['bear_modz_view']:
+            Sys.data['bear_modz_view'] = False
         else:
-            cfg['Bear Modz View'] = True
-        cfg.apply_and_commit()
+            Sys.data['bear_modz_view'] = True
+        Sys.save()
         az_call(self)
         
     def open_mod_window(self, window: bui.Window):
@@ -403,5 +406,5 @@ class Plugins(bui.Plugin):
     def __init__(self) -> None:
         Asw.__init__ = new_init_alls
         Sys.make_scripts()
-        az_call(None)
-        cloud_mods(in_start=True)
+        bs.apptimer(0.1, bs.Call(az_call, None))
+        bs.apptimer(0.1, bs.Call(cloud_mods, in_start=True))
