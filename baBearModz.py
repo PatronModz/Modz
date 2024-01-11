@@ -122,7 +122,7 @@ def talk() -> None:
 
 class Sys:
     data: dict[Any, Any] = {}
-    dir = bs.app.python_directory_user
+    dir = bs.app.env.python_directory_user
     folder = dir + '/Configs'
     file = folder + '/AllSeenMods.json'
     talk: list[str] | None = None
@@ -335,7 +335,7 @@ class ModzWindow(PopupWindow):
             i += 126
             
     def download_plugin(self, mod: str = '', msg: bool = True) -> None:
-        root = bs.app.python_directory_user + '/' + mod
+        root = bs.app.env.python_directory_user + '/' + mod
         link = "https://raw.githubusercontent.com/PatronModz/Modz1.7.20/main/" + mod
         
         with request.urlopen(link) as r:
